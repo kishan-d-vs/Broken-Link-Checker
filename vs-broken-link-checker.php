@@ -51,6 +51,10 @@ function vsblc_check_links()
     $broken_links = [];
 
     foreach ($posts as $post) {
+        if (empty($post->post_content)) {
+            continue;
+        }
+
         $doc = new DOMDocument();
         @$doc->loadHTML($post->post_content);
         $links = $doc->getElementsByTagName('a');
