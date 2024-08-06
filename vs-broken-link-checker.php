@@ -9,9 +9,19 @@ Author URI: https://www.vsplash.com/
 License: GPL2
 */
 
+
+function vsblc_enqueue_scripts()
+{
+    wp_enqueue_script('vsblc-ajax', plugin_dir_url(__FILE__) . 'assets/js/vsblc-ajax.js', [], null, true);
+    wp_localize_script('vsblc-ajax', 'vsblcAjax', [
+        'ajax_url' => admin_url('admin-ajax.php')
+    ]);
+}
+add_action('admin_enqueue_scripts', 'vsblc_enqueue_scripts');
+
+
 // Hook for adding admin menus
 add_action('admin_menu', 'vsblc_add_pages');
-
 // Action function for the above hook
 function vsblc_add_pages()
 {
@@ -26,23 +36,25 @@ function vsblc_add_pages()
     );
 }
 
-function vsblc_options_page()
-{
+function vsblc_options_page() {
 ?>
     <div class="wrap">
         <h1>Broken Link Checker</h1>
-        <form method="post" action="">
-            <input type="hidden" name="vsblc_check_links" value="1" />
-            <input type="submit" value="Check for Broken Links" class="button-primary" />
-        </form>
-        <?php
-        if (isset($_POST['vsblc_check_links'])) {
-            vsblc_check_links();
-        }
-        ?>
+        <button id="vsblc-check-links-button" class="button-primary">Check for Broken Links</button>
+        <div id="vsblc-results"></div>
     </div>
 <?php
 }
+
+function vsblc_check_links_ajax()
+{
+    ob_start();
+    vsblc_check_links();
+    $output = ob_get_clean();
+    echo $output;
+    wp_die();
+}
+add_action('wp_ajax_vsblc_check_links', 'vsblc_check_links_ajax');
 
 function vsblc_check_links()
 {
