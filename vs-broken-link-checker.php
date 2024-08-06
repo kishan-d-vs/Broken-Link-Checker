@@ -61,6 +61,10 @@ function vsblc_check_links()
 
         foreach ($links as $link) {
             $url = $link->getAttribute('href');
+            if (empty($url)) {
+                continue;
+            }
+            
             $link_text = $link->textContent;
             $headers = @get_headers($url);
 
