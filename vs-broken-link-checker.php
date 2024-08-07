@@ -78,8 +78,10 @@ function vsblc_check_links()
             }
             
             $link_text = $link->textContent;
+            if (strpos($url, "http") === false && strpos($url, "https") === false){
+                $url = home_url().$url;
+            }
             $headers = @get_headers($url);
-
             if ($headers) {
                 // Extract the HTTP status code from the headers
                 $status_code = intval(substr($headers[0], 9, 3));
